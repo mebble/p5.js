@@ -10,6 +10,44 @@
 var p5 = require('./main');
 
 /**
+ * The boolean system variable <a href="#/p5/isLooping">isLooping</a> lets us query
+ * whether p5.js is continuously executing the code within <a href="#/p5/draw">draw()</a>.
+ * If its value is true, draw() is continuously being executed. This happens when
+ * the sketch has just been started, and also after calling <a href="#/p5/loop">loop()</a>.
+ * If its value is false, it means draw() has been stopped by a call to <a href="#/p5/noLoop">noLoop()</a>.
+ *
+ * @property {Boolean} isLooping
+ * @readOnly
+ * @example
+ * <div>
+ * <code>
+ * var x = 0;
+ *
+ * function draw() {
+ *   background(230);
+ *   fill(0);
+ *   textSize(32);
+ *   text(x, 10, 60);
+ *   x++;
+ * }
+ *
+ * function mousePressed() {
+ *   if (isLooping) {
+ *     noLoop();
+ *   } else {
+ *     loop();
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 50x50 on pressing the mouse, an integer toggles between incrementing and staying constant.
+ *
+ */
+p5.prototype.isLooping = true;
+
+/**
  * Stops p5.js from continuously executing the code within <a href="#/p5/draw">draw()</a>.
  * If <a href="#/p5/loop">loop()</a> is called, the code in <a href="#/p5/draw">draw()</a> begins to run continuously again.
  * If using <a href="#/p5/noLoop">noLoop()</a> in <a href="#/p5/setup">setup()</a>, it should be the last line inside the block.
@@ -23,7 +61,8 @@ var p5 = require('./main');
  * <br><br>
  * Note that if the sketch is resized, <a href="#/p5/redraw">redraw()</a> will be called to update
  * the sketch, even after <a href="#/p5/noLoop">noLoop()</a> has been specified. Otherwise, the sketch
- * would enter an odd state until <a href="#/p5/loop">loop()</a> was called.
+ * would enter an odd state until <a href="#/p5/loop">loop()</a> was called. However, <a href="#/p5/isLooping">isLooping</a>
+ * stays false.
  *
  * @method noLoop
  * @example
@@ -70,6 +109,7 @@ var p5 = require('./main');
  */
 p5.prototype.noLoop = function() {
   this._loop = false;
+  this._setProperty('isLooping', false);
 };
 /**
  * By default, p5.js loops through draw() continuously, executing the code
@@ -110,6 +150,7 @@ p5.prototype.noLoop = function() {
 
 p5.prototype.loop = function() {
   this._loop = true;
+  this._setProperty('isLooping', true);
   this._draw();
 };
 
@@ -260,6 +301,9 @@ p5.prototype.pop = function() {
  * <br><br>
  * In addition you can set the number of redraws per method call. Just
  * add an integer as single parameter for the number of redraws.
+ * <br><br>
+ * <a href="#/p5/redraw">redraw()</a> does not change the value of the <a href="#/p5/isLooping">isLooping</a> variable,
+ * because it executes <a href="#/p5/draw">draw()</a> only 'n' times, not continuously.
  *
  * @method redraw
  * @param  {Integer} [n] Redraw for n-times. The default value is 1.
